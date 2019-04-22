@@ -1,5 +1,5 @@
 const GridfsStorage = require('multer-gridfs-storage')
-
+const multer = require('multer')
 const storage = new GridfsStorage({
   url: process.env.DATABASE_URL,
   file: (req, file) => {
@@ -15,4 +15,4 @@ const storage = new GridfsStorage({
 })
 
 const upload = multer({ storage })
-export default upload
+module.exports = upload

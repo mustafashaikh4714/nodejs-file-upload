@@ -1,6 +1,7 @@
 require('dotenv').config()
 const conn = require('./config/database')
 
+const mongoose = require('mongoose')
 const Grid = require('gridfs-stream')
 const express = require('express')
 const bodyParser = require('body-parser')
