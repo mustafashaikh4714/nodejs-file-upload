@@ -16,4 +16,14 @@ module.exports = (app, gfs) => {
     }
     return res.send({ files })
   })
+  // display original file in the browser.
+  app.get('/files/:filename', async (req, res) => {
+    let file = await gfs.files.findOne({ filename: req.params.filename })
+    if (!file) {
+      res.status(400).send({ message: ' No file exist!' })
+    }
+
+    const readStream = gfs.createReadStream(file.filename)
+    readStream.pipe(res)
+  })
 }
