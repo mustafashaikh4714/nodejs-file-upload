@@ -26,4 +26,13 @@ module.exports = (app, gfs) => {
     const readStream = gfs.createReadStream(file.filename)
     readStream.pipe(res)
   })
+
+  app.delete('/files/:id', async (req, res) => {
+    let removedFile = await gfs.remove({ _id: req.params.id })
+    if (!removedFile) return re.status.send({ message: "can't remove file!" })
+
+    return res.send({
+      message: `file ${removedFile} from the database successfully.`
+    })
+  })
 }
