@@ -3,16 +3,12 @@ const multer = require('multer')
 const storage = new GridfsStorage({
   url: process.env.DATABASE_URL,
   file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      const fileInfo = {
-        filename: file.originalname,
-        bucketname: 'uploads'
-      }
-
-      resolve(fileInfo)
-    })
+    return {
+      bucketName: 'uploads',
+      filename: file.originalname
+    }
   }
 })
 
-const upload = multer({ storage })
+const upload = multer({ storage }).single('file')
 module.exports = upload
