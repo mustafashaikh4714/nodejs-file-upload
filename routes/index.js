@@ -1,5 +1,7 @@
 const mongoUpload = require('../utils/mongodbFileUpload')
+const diskUpload = require('../utils/diskStorage')
 const mongoose = require('mongoose')
+const path = require('path')
 const Grid = require('gridfs-stream')
 const conn = require('../config/database')
 
@@ -64,5 +66,9 @@ module.exports = app => {
 
       return res.send({ message: ' file uploaded successfully! ' })
     })
+  })
+  app.post('/download/file', (req, res) => {
+    filepath = path.join(__dirname, '../uploads') + '/' + req.body.filename
+    res.sendFile(filepath)
   })
 }
