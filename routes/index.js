@@ -4,18 +4,17 @@ const Grid = require('gridfs-stream')
 const conn = require('../config/database')
 
 module.exports = app => {
-  // Init gfs
   let gfs
   conn.once('open', () => {
-    // Init stream
     gfs = Grid(conn.db, mongoose.mongo)
     gfs.collection('uploads')
   })
 
-  // upload single file.
   app.get('/upload', (req, res) => {
     res.render('index')
   })
+
+  // Store single file to the database.
   app.post('/upload', (req, res) => {
     upload(req, res, err => {
       if (err) return res.status(400).send(err.message)
@@ -26,7 +25,7 @@ module.exports = app => {
     })
   })
 
-  // get all files
+  // Retrieve all files from the database.
   app.get('/files', async (req, res) => {
     let files = await gfs.files.find().toArray((err, files) => {
       // Check if files
@@ -49,6 +48,7 @@ module.exports = app => {
     readStream.pipe(res)
   })
 
+  // Delete file from the database.
   app.delete('/files/:id', async (req, res) => {
     let removedFile = await gfs.remove({ _id: req.params.id, root: 'uploads' })
     if (!removedFile) return res.status.send({ message: "can't remove file!" })
