@@ -9,12 +9,13 @@ module.exports = app => {
   // Init gfs
   let gfs
   conn.once('open', () => {
-    // Init stream
     gfs = Grid(conn.db, mongoose.mongo)
     gfs.collection('uploads')
   })
 
-  // upload single file.
+  // GRIDFS STORAGE.
+
+  // Store file to the database.
   app.get('/upload', (req, res) => {
     res.render('index')
   })
@@ -28,7 +29,7 @@ module.exports = app => {
     })
   })
 
-  // get all files
+  // Retrieve all files from the database.
   app.get('/files', async (req, res) => {
     let files = await gfs.files.find().toArray((err, files) => {
       // Check if files
@@ -40,7 +41,7 @@ module.exports = app => {
       return res.json(files)
     })
   })
-  // display original file in the browser.
+  // Display original file in the browser.
   app.get('/files/:filename', async (req, res) => {
     let file = await gfs.files.findOne({ filename: req.params.filename })
     if (!file) {
@@ -51,6 +52,7 @@ module.exports = app => {
     readStream.pipe(res)
   })
 
+  // Delete file from the database.
   app.delete('/files/:id', async (req, res) => {
     let removedFile = await gfs.remove({ _id: req.params.id, root: 'uploads' })
     if (!removedFile) return res.status.send({ message: "can't remove file!" })
@@ -60,6 +62,9 @@ module.exports = app => {
     })
   })
 
+  // DISK STORAGE
+
+  // store single file.
   app.post('/disk/upload', (req, res) => {
     diskUpload(req, res, err => {
       if (err) return res.status(400).send({ message: err.message })
@@ -67,6 +72,8 @@ module.exports = app => {
       return res.send({ message: ' file uploaded successfully! ' })
     })
   })
+
+  // retrieve file.
   app.post('/download/file', (req, res) => {
     filepath = path.join(__dirname, '../uploads') + '/' + req.body.filename
     res.sendFile(filepath)
