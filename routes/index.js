@@ -1,4 +1,4 @@
-const upload = require('../utils/mongodbFileUpload')
+const mongoUpload = require('../utils/mongodbFileUpload')
 const mongoose = require('mongoose')
 const Grid = require('gridfs-stream')
 const conn = require('../config/database')
@@ -17,7 +17,7 @@ module.exports = app => {
     res.render('index')
   })
   app.post('/upload', (req, res) => {
-    upload(req, res, err => {
+    mongoUpload(req, res, err => {
       if (err) return res.status(400).send(err.message)
     })
     res.send({
@@ -55,6 +55,14 @@ module.exports = app => {
 
     return res.send({
       message: `file ${removedFile} from the database successfully.`
+    })
+  })
+
+  app.post('/disk/upload', (req, res) => {
+    diskUpload(req, res, err => {
+      if (err) return res.status(400).send({ message: err.message })
+
+      return res.send({ message: ' file uploaded successfully! ' })
     })
   })
 }

@@ -10,5 +10,5 @@ const storage = new GridfsStorage({
   }
 })
 
-const upload = multer({ storage }).single('file')
-module.exports = upload
+const mongoUpload = multer({ storage }).single('file')
+module.exports = mongoUpload
